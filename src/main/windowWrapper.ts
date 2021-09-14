@@ -18,6 +18,7 @@ export default (url: string): BrowserWindow => {
     show: false,
     minHeight: 570,
     minWidth: 480,
+    titleBarStyle: 'hidden',
     center: true,
     title: 'Google Chat',
     backgroundColor: '#E8EAED',
