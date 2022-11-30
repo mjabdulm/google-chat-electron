@@ -1,12 +1,10 @@
 import path from 'path';
 import {app, BrowserWindow, nativeImage} from 'electron';
 import store from './config';
-import environment from "../environment";
 
 export default (url: string): BrowserWindow => {
   const window = new BrowserWindow({
     webPreferences: {
-      nativeWindowOpen: false,
       autoplayPolicy: 'user-gesture-required',
       contextIsolation: false,
       nodeIntegration: false,
@@ -22,12 +20,14 @@ export default (url: string): BrowserWindow => {
     center: true,
     title: 'Google Chat',
     backgroundColor: '#E8EAED',
+    autoHideMenuBar: store.get('app.hideMenuBar'),
   });
 
   window.once('ready-to-show', () => {
     if (!store.get('app.startHidden')) {
       window.show();
     }
+    window.webContents.session.setSpellCheckerEnabled( !store.get('app.disableSpellChecker') );
   });
 
   window.loadURL(url);

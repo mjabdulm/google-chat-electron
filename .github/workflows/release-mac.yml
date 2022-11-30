@@ -8,28 +8,34 @@ on:
 jobs:
   release-mac:
     name: release-mac
-    runs-on: macos-10.15
+    runs-on: macos-11
     timeout-minutes: 10
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
 
-      - name: Install dependencies with yarn
-        run: yarn install --non-interactive --frozen-lockfile
+      - name: Install pnpm
+        run: npm install -g pnpm@^7
 
-      - name: Packing
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Packing for mac
         run: |
           rm -rf ./.github
-          yarn run pack:mac
+          npm run pack:mac
+          npm run pack:mac-arm
 
       - name: Create zip package
-        run: yarn run build:mac-zip
+        run: |
+          npm run build:mac-zip
+          npm run build:mac-arm-zip
 
       - name: Upload binaries to GitHub release
         uses: svenstaro/upload-release-action@v2

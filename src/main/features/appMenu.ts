@@ -47,6 +47,9 @@ export default (window: BrowserWindow) => {
           click: relaunchApp
         },
         {
+          role: 'minimize'
+        },
+        {
           label: 'Sign Out',
           click: () => {
             window.loadURL(environment.logoutUrl)
@@ -145,7 +148,7 @@ export default (window: BrowserWindow) => {
         {
           label: 'Auto check for Updates',
           type: 'checkbox',
-          enabled: !environment.isSnap,
+          enabled: true,
           checked: store.get('app.autoCheckForUpdates'),
           click: (menuItem) => {
             store.set('app.autoCheckForUpdates', menuItem.checked)
@@ -174,6 +177,26 @@ export default (window: BrowserWindow) => {
             store.set('app.startHidden', menuItem.checked)
           }
         },
+        {
+          label: 'Hide Menu Bar',
+          type: 'checkbox',
+          enabled: process.platform !== 'darwin',
+          checked: store.get('app.hideMenuBar'),
+          click: async (menuItem) => {
+            window.setMenuBarVisibility(!menuItem.checked)
+            window.setAutoHideMenuBar(menuItem.checked)
+            store.set('app.hideMenuBar', menuItem.checked)
+          }
+        },
+        {
+          label: 'Disable Spell Checker',
+          type: 'checkbox',
+          checked: store.get('app.disableSpellChecker'),
+          click: async (menuItem) => {
+            window.webContents.session.setSpellCheckerEnabled( !menuItem.checked );
+            store.set('app.disableSpellChecker', menuItem.checked)
+          }
+        },
       ]
     },
     {
@@ -189,10 +212,10 @@ export default (window: BrowserWindow) => {
         },
         {
           label: 'Check For Updates',
-          enabled: !environment.isSnap,
+          enabled: true,
           click: () => {
             checkForUpdates({
-              silent: false
+              silent: false,
             });
           }
         },
@@ -240,7 +263,7 @@ export default (window: BrowserWindow) => {
                   type: 'warning',
                   title: 'Confirm',
                   message: 'Reset app data?',
-                  detail: `You will be logged out from application.\nAll settings will be reset to default.\nPress 'Yes' to proceed.`,
+                  detail: `You will be logged out from application.\nAll settings will reset to default.\nPress 'Yes' to proceed.`,
                   buttons: ['Yes', 'No'],
                   cancelId: 1,
                   defaultId: 1,

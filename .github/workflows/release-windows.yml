@@ -1,4 +1,4 @@
-name: release-linux
+name: release-windows
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
       - '*'
 
 jobs:
-  release-linux:
-    name: release-linux
-    runs-on: ubuntu-20.04
-    timeout-minutes: 15
+  release-windows:
+    name: release-windows
+    runs-on: windows-2019
+    timeout-minutes: 10
 
     steps:
       - name: Checkout code
@@ -26,15 +26,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Pack for linux
-        run: |
-          rm -rf ./.github
-          npm run pack:linux
+      - name: Pack for Windows
+        run: npm run pack:windows
 
-      - name: Create debian package
-        run: |
-          npm run build:deb
-          npm run build:deb-checksum
+      - name: Download inno-setup installer
+        working-directory: ./windows
+        run: curl.exe --max-time 30 --retry 3 -L -o ./innosetup.exe https://files.jrsoftware.org/is/6/innosetup-6.2.0.exe
+
+      - name: Install inno-setup silently
+        working-directory: ./windows
+        run: ./innosetup.exe /SP- /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOCANCEL
+
+      - name: Create installer
+        run: npm run build:windows
 
       - name: Upload binaries to GitHub release
         uses: svenstaro/upload-release-action@v2
@@ -43,4 +47,3 @@ jobs:
           file: './dist/installers/*.*'
           tag: ${{ github.ref }}
           file_glob: true
-

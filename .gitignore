@@ -2,8 +2,6 @@
 
 # various IDEs
 .idea/
-.project
-*.sublime-*
 .vscode/
 
 # logs and cache
@@ -12,7 +10,6 @@ npm-debug.log*
 error_log
 .sass-cache
 .cache
-.php_cs.cache
 
 # OS generated files
 [Tt]humbs.db
@@ -45,12 +42,10 @@ node_modules/
 *.crt
 *.key
 
-# Force yarn usage
+# Dont use npm
 package-lock.json
 
 # This project
 /dist/
-/*.deb
-/*.snap
-/squashfs-root/
 /lib/
+/*.deb
